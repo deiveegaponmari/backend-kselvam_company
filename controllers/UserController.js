@@ -13,11 +13,12 @@ const RegisterUser = async (req, res) => {
       return res.status(400).json({ message: "User Already Exists" });
     }
     const CreateUser = await UserModel.create({ userName, email, password ,role});
-    return res.status(200).json({
+    return res.status(201).json({
       user: CreateUser,
       message: "User Registration Successfull!!!!",
     });
   } catch (error) {
+    console.log("Registration Error:", error);
     return res.status(500).json({ error: "Server Error" });
   }
 };
