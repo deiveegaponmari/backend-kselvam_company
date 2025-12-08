@@ -2,6 +2,7 @@ const express=require('express');
 require("dotenv").config()
 const connectDB=require('./config/dbConfig')
 const bodyParser = require('body-parser');
+const UserRouter=require("./routes/UserRoute")
 const cors=require('cors')
 const app=express();
 //middleware json
@@ -13,7 +14,7 @@ app.get("/",(req,res)=>{
 //database connection
 connectDB();
 //Routes
-
+app.use("/api",UserRouter)
 app.listen(process.env.PORT,()=>{
     console.log(`server running successfully http://localhost:${process.env.PORT}`)
 })
