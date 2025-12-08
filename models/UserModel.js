@@ -8,7 +8,7 @@ const UserSchema = new mongoose.Schema(
     },
     role:{
       type:String,
-      enum:["Admin","User","Student","Parent"],
+      enum:["Admin","User"],
       default:"User"
     },
     email: {
@@ -30,7 +30,7 @@ if(this.isModified("password")){
 const salt=await bcrypt.genSalt(10);
 this.password=await bcrypt.hash(this.password,salt);
 }
-next();
 })
+
 const UserModel = mongoose.model("Users", UserSchema);
 module.exports = UserModel;
