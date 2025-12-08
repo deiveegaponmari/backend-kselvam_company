@@ -1,0 +1,20 @@
+const express=require('express');
+require("dotenv").config()
+const connectDB=require('./config/dbConfig')
+const bodyParser = require('body-parser');
+const cors=require('cors')
+const app=express();
+//middleware json
+app.use(bodyParser.json());
+app.use(cors());
+app.get("/",(req,res)=>{
+    res.send("Welcome to backend!!!! selvam company project")
+})
+//database connection
+connectDB();
+//Routes
+
+app.listen(process.env.PORT,()=>{
+    console.log(`server running successfully http://localhost:${process.env.PORT}`)
+})
+/* anandraj30986@gmail.com */
