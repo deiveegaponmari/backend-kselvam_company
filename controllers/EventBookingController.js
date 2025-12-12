@@ -42,7 +42,7 @@ const EventBooking = async (req, res) => {
     });
   } catch (error){
       console.error(error);
-    alert("Something went wrong! Please try again.");
+    res.status(500).json({error:"Something went wrong! Please try again."});
   }
 };
 module.exports = {
