@@ -35,12 +35,15 @@ const EventBooking = async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
-    res.json({
+    res.status(200).json({
       data: NewEventBooking,
       success: true,
       msg: "Booking email sent!",
     });
-  } catch {}
+  } catch (error){
+      console.error(error);
+    alert("Something went wrong! Please try again.");
+  }
 };
 module.exports = {
   EventBooking,
