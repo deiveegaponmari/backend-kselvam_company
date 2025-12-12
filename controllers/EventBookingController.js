@@ -16,13 +16,13 @@ const EventBooking = async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "process.env.SMTP_EMAIL",
-        pass: "process.env.SMTP_PASSWORD",
+        user: process.env.SMTP_EMAIL,
+        pass: process.env.SMTP_PASSWORD,
       },
     });
 
     const mailOptions = {
-      from: "process.env.SMTP_EMAIL",
+      from: process.env.SMTP_EMAIL,
       to: email,
       subject: `New Event Booking - ${eventName}`,
       text: `
