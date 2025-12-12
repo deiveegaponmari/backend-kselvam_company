@@ -4,14 +4,13 @@ require("dotenv").config();
 
 const EventBooking = async (req, res) => {
   try {
-    const {  eventName,name, email, phone, message, event } = req.body;
+    const {  eventName,name, email, phone, message} = req.body;
     const NewEventBooking = await EventBookingModel.create({
          eventName,
       name,
       email,
       phone,
       message,
-      event,
     });
     /*  Email----sending */
     const transporter = nodemailer.createTransport({
@@ -25,9 +24,9 @@ const EventBooking = async (req, res) => {
     const mailOptions = {
       from: "process.env.SMTP_EMAIL",
       to: email,
-      subject: `New Event Booking - ${event}`,
+      subject: `New Event Booking - ${eventName}`,
       text: `
-        Event: ${event}
+        Event: ${eventName}
         Name: ${name}
         Phone: ${phone}
         Message: ${message}
