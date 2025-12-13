@@ -4,9 +4,12 @@ require("dotenv").config();
 
 const EventBooking = async (req, res) => {
   try {
-    const {  eventName,name, email, phone, message} = req.body;
+    const { eventName, name, email, phone, message } = req.body;
+    if (!eventName || !name || !email || !phone) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
     const NewEventBooking = await EventBookingModel.create({
-         eventName,
+      eventName,
       name,
       email,
       phone,
@@ -40,9 +43,9 @@ const EventBooking = async (req, res) => {
       success: true,
       msg: "Booking email sent!",
     });
-  } catch (error){
-      console.error(error);
-    res.status(500).json({error:"Something went wrong! Please try again."});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Something went wrong! Please try again." });
   }
 };
 module.exports = {
