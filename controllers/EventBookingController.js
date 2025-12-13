@@ -19,19 +19,43 @@ const EventBooking = async (req, res) => {
     });
 
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT),
+      secure: false, // true only for 465
       auth: {
-        user: process.env.SMTP_EMAIL,
-        pass: process.env.SMTP_PASSWORD,
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
       },
-      connectionTimeout: 10000,
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    /*  User email (confirmation) */
+    await transporter.sendMail({
+      from: `"K Selvam Sounds" <${process.env.SMTP_FROM}>`,
+      to: email,
+      subject: "Booking Request Received",
+      text: "Thanks for contacting us. We will reach you shortly.",
+    });
+
+    /*  Admin email (notification) */
+
+    await transporter.sendMail({
+      from: `"K Selvam Sounds" <${process.env.SMTP_FROM}>`,
+      to: process.env.SMTP_FROM,
+      subject: `New Booking - ${eventName}`,
+      text: `
+Name: ${name}
+Phone: ${phone}
+Email: ${email}
+Message: ${message}
+`,
     });
 
     await transporter.verify();
 
-    await transporter.sendMail({
+    /* await transporter.sendMail({
       from: `"K Selvam Sounds" <${process.env.SMTP_EMAIL}>`,
       to: process.env.SMTP_EMAIL,
       replyTo: email,
@@ -43,9 +67,10 @@ Phone: ${phone}
 Email: ${email}
 Message: ${message}
       `,
-    });
+    }); */
 
     res.status(200).json({
+      data: booking,
       success: true,
       msg: "Booking request sent successfully",
     });
