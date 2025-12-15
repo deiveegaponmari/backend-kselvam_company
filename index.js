@@ -8,12 +8,7 @@ const cors=require('cors')
 const app=express();
 //middleware json
 app.use(bodyParser.json());
-app.use(
-  cors({
-    origin: "https://kselvam.netlify.app",
-    credentials: true,
-  })
-);
+app.use(cors());
 
 app.get("/",(req,res)=>{
     res.send("Welcome to backend!!!! selvam company project")
