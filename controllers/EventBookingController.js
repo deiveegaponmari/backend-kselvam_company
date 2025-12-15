@@ -1,6 +1,6 @@
 const EventBookingModel = require("../models/EventBookingModel");
-const nodemailer = require("nodemailer");
 require("dotenv").config();
+const SibApiV3Sdk = require("sib-api-v3-sdk");
 
 const EventBooking = async (req, res) => {
   try {
@@ -18,37 +18,40 @@ const EventBooking = async (req, res) => {
       message,
     });
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT),
-      secure: false,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+    // Brevo setup
+    const client = SibApiV3Sdk.ApiClient.instance;
+    client.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
+
+    const tranEmailApi = new SibApiV3Sdk.TransactionalEmailsApi();
+
+    // ✅ User email
+    await tranEmailApi.sendTransacEmail({
+      sender: {
+        email: process.env.BREVO_SENDER_EMAIL,
+        name: "K Selvam Sounds",
       },
-    });
-
-    // ✅ verify SMTP
-    await transporter.verify();
-    console.log("SMTP server is ready");
-    // ✅ User mail
-    await transporter.sendMail({
-      from: `"K Selvam Sounds" <${process.env.SMTP_FROM}>`,
-      to: email,
+      to: [{ email }],
       subject: "Booking Request Received",
-      text: "Thanks for contacting us. We will reach you shortly.",
+      htmlContent: `
+        <h3>Hello ${name},</h3>
+        <p>Thank you for booking <b>${eventName}</b>.</p>
+        <p>We will contact you shortly.</p>
+      `,
     });
 
-    // ✅ Admin mail
-    await transporter.sendMail({
-      from: `"K Selvam Sounds" <${process.env.SMTP_FROM}>`,
-      to: process.env.SMTP_FROM,
+    // ✅ Admin email
+    await tranEmailApi.sendTransacEmail({
+      sender: {
+        email: process.env.BREVO_SENDER_EMAIL,
+        name: "K Selvam Sounds",
+      },
+      to: [{ email: process.env.BREVO_SENDER_EMAIL }],
       subject: `New Booking - ${eventName}`,
-      text: `
-          Name: ${name}
-          Phone: ${phone}
-          Email: ${email}
-          Message: ${message}
+      htmlContent: `
+        <p><b>Name:</b> ${name}</p>
+        <p><b>Email:</b> ${email}</p>
+        <p><b>Phone:</b> ${phone}</p>
+        <p><b>Message:</b> ${message}</p>
       `,
     });
 
