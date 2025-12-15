@@ -21,17 +21,17 @@ const EventBooking = async (req, res) => {
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT),
-      secure: false, // true only for 465
+      secure: false,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
-      tls: {
-        rejectUnauthorized: false,
-      },
     });
 
-    /*  User email (confirmation) */
+    // ✅ verify SMTP
+    await transporter.verify();
+    console.log("SMTP server is ready");
+    // ✅ User mail
     await transporter.sendMail({
       from: `"K Selvam Sounds" <${process.env.SMTP_FROM}>`,
       to: email,
@@ -39,39 +39,22 @@ const EventBooking = async (req, res) => {
       text: "Thanks for contacting us. We will reach you shortly.",
     });
 
-    /*  Admin email (notification) */
-
+    // ✅ Admin mail
     await transporter.sendMail({
       from: `"K Selvam Sounds" <${process.env.SMTP_FROM}>`,
       to: process.env.SMTP_FROM,
       subject: `New Booking - ${eventName}`,
       text: `
-Name: ${name}
-Phone: ${phone}
-Email: ${email}
-Message: ${message}
-`,
+          Name: ${name}
+          Phone: ${phone}
+          Email: ${email}
+          Message: ${message}
+      `,
     });
 
-    await transporter.verify();
-
-    /* await transporter.sendMail({
-      from: `"K Selvam Sounds" <${process.env.SMTP_EMAIL}>`,
-      to: process.env.SMTP_EMAIL,
-      replyTo: email,
-      subject: `New Event Booking - ${eventName}`,
-      text: `
-Event: ${eventName}
-Name: ${name}
-Phone: ${phone}
-Email: ${email}
-Message: ${message}
-      `,
-    }); */
-
     res.status(200).json({
-      data: booking,
       success: true,
+      data: booking,
       msg: "Booking request sent successfully",
     });
   } catch (error) {
