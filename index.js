@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const UserRouter=require("./routes/UserRoute");
 const EventRouter=require('./routes/EventRoute')
 const SliderRouter=require('./routes/HeroSliderRoute')
+const EventHomeRouter=require('./routes/EventHome')
 const cors=require('cors')
 const app=express();
 //middleware json
@@ -20,6 +21,7 @@ connectDB();
 app.use("/api",UserRouter)
 app.use("/api",EventRouter)
 app.use("/api",SliderRouter);
+app.use('/api',EventHomeRouter)
 
 app.listen(process.env.PORT,()=>{
     console.log(`server running successfully http://localhost:${process.env.PORT}`)
