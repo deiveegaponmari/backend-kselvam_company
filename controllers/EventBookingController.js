@@ -75,5 +75,22 @@ const EventBooking = async (req, res) => {
   }
 };
 
-module.exports = { EventBooking };
+const getBooking=async ()=>{
+  try{
+    const bookings=await EventBookingModel.find();
+    res.status(200).json({
+      success:true,
+      data:bookings
+    })
+  }
+  catch(error){
+    res.status(500).json({
+      error:"Something Went Wrong"
+    })
+  }
+}
+module.exports = { 
+  EventBooking,
+  getBooking
+ };
 

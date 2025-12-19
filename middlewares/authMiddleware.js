@@ -18,8 +18,19 @@ const authMiddleware = (req, res, next) => {
     next();
   } catch {
     return res.status(400).json({
-      error: "Invalid Token",
+      error: "Token is invalid or expired",
     });
   }
 };
-module.exports = authMiddleware;
+
+const adminOnly = (req, res, next) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ error: "Access denied" });
+  }
+  next();
+};
+
+module.exports = {
+  authMiddleware,
+  adminOnly
+}

@@ -1,8 +1,9 @@
 const express=require('express');
-const { EventBooking }=require("../controllers/EventBookingController")
+const { EventBooking,getBooking }=require("../controllers/EventBookingController")
 const EventRouter=express.Router();
-const authMiddleware=require('../middlewares/authMiddleware')
+const {authMiddleware,adminOnly}=require('../middlewares/authMiddleware')
 
-EventRouter.post("/event-book",authMiddleware,EventBooking)
+EventRouter.post("/event-book",EventBooking)
+EventRouter.get("/getEvent",authMiddleware,adminOnly,getBooking)
 
 module.exports=EventRouter;
