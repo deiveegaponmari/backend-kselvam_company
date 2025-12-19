@@ -1,6 +1,8 @@
 const EventBookingModel = require("../models/EventBookingModel");
 require("dotenv").config();
-const SibApiV3Sdk = require("sib-api-v3-sdk");
+const axios = require("axios");
+
+const BREVO_URL = "https://api.brevo.com/v3/smtp/email";
 
 const EventBooking = async (req, res) => {
   try {
@@ -10,6 +12,7 @@ const EventBooking = async (req, res) => {
       return res.status(400).json({ error: "All fields are required" });
     }
 
+    // ✅ Save booking to DB
     const booking = await EventBookingModel.create({
       eventName,
       name,
@@ -18,17 +21,16 @@ const EventBooking = async (req, res) => {
       message,
     });
 
-    // Brevo setup
-    const client = SibApiV3Sdk.ApiClient.instance;
-    client.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
+    const headers = {
+      "api-key": process.env.BREVO_API_KEY,
+      "Content-Type": "application/json",
+    };
 
-    const tranEmailApi = new SibApiV3Sdk.TransactionalEmailsApi();
-
-    // ✅ User email
-    await tranEmailApi.sendTransacEmail({
+    // ================= USER EMAIL =================
+    const userEmailPayload = {
       sender: {
-        email: process.env.BREVO_SENDER_EMAIL,
         name: "K Selvam Sounds",
+        email: process.env.BREVO_SENDER_EMAIL,
       },
       to: [{ email }],
       subject: "Booking Request Received",
@@ -37,13 +39,15 @@ const EventBooking = async (req, res) => {
         <p>Thank you for booking <b>${eventName}</b>.</p>
         <p>We will contact you shortly.</p>
       `,
-    });
+    };
 
-    // ✅ Admin email
-    await tranEmailApi.sendTransacEmail({
+    await axios.post(BREVO_URL, userEmailPayload, { headers });
+
+    // ================= ADMIN EMAIL =================
+    const adminEmailPayload = {
       sender: {
-        email: process.env.BREVO_SENDER_EMAIL,
         name: "K Selvam Sounds",
+        email: process.env.BREVO_SENDER_EMAIL,
       },
       to: [{ email: process.env.BREVO_SENDER_EMAIL }],
       subject: `New Booking - ${eventName}`,
@@ -51,21 +55,25 @@ const EventBooking = async (req, res) => {
         <p><b>Name:</b> ${name}</p>
         <p><b>Email:</b> ${email}</p>
         <p><b>Phone:</b> ${phone}</p>
-        <p><b>Message:</b> ${message}</p>
+        <p><b>Message:</b> ${message || "N/A"}</p>
       `,
-    });
+    };
+
+    await axios.post(BREVO_URL, adminEmailPayload, { headers });
 
     res.status(200).json({
       success: true,
       data: booking,
       msg: "Booking request sent successfully",
     });
+
   } catch (error) {
-    console.error("Event Booking Error:", error);
-    res.status(500).json({ error: "Server error. Please try again later." });
+    console.error("Event Booking Error:", error.response?.data || error.message);
+    res.status(500).json({
+      error: "Server error. Please try again later.",
+    });
   }
 };
 
-module.exports = {
-  EventBooking,
-};
+module.exports = { EventBooking };
+
