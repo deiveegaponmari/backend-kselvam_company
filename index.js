@@ -3,7 +3,7 @@ require("dotenv").config()
 const connectDB=require('./config/dbConfig')
 const bodyParser = require('body-parser');
 const UserRouter=require("./routes/UserRoute");
-const EventRouter=require('./routes/EventRoute')
+const EventBookingRouter=require('./routes/EventBookingRoute')
 const SliderRouter=require('./routes/HeroSliderRoute')
 const EventHomeRouter=require('./routes/EventHome')
 const ServiceRouter=require('./routes/ServiceHome')
@@ -31,7 +31,7 @@ connectDB();
 
 //Routes
 app.use("/api",UserRouter)
-app.use("/api",EventRouter)
+app.use("/api",EventBookingRouter)
 app.use("/api",SliderRouter);
 app.use("/api",ServiceRouter)
 app.use('/api',EventHomeRouter)

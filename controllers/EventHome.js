@@ -1,7 +1,7 @@
 const EventHomeModel = require("../models/EventHome");
 
 //store image url
-const CreateEvent = async (req, res) => {
+const AddEvent = async (req, res) => {
   try {
     const { imageUrl } = req.body;
 
@@ -23,6 +23,6 @@ const GetEvent = async (req, res) => {
   }
 };
 module.exports = {
-  CreateEvent,
-  GetEvent
+  AddEvent,
+  GetEvent,
 };
