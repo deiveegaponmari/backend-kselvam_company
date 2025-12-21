@@ -9,15 +9,26 @@ const EventHomeRouter=require('./routes/EventHome')
 const ServiceRouter=require('./routes/ServiceHome')
 const cors=require('cors')
 const app=express();
-//middleware json
-app.use(bodyParser.json());
-app.use(cors());
 
-app.get("/",(req,res)=>{
-    res.send("Welcome to backend!!!! selvam company project")
-})
+
+// CORS (MUST be before routes)
+app.use(cors({
+  origin: "https://kselvam.netlify.app",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
+// middleware
+app.use(bodyParser.json());
+
+// test route
+app.get("/", (req, res) => {
+  res.send("Welcome to backend!!!! selvam company project");
+});
+
 //database connection
 connectDB();
+
 //Routes
 app.use("/api",UserRouter)
 app.use("/api",EventRouter)
