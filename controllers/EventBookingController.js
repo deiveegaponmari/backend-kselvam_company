@@ -75,7 +75,7 @@ const EventBooking = async (req, res) => {
   }
 };
 
-const getBooking=async ()=>{
+const getBooking=async (req,res)=>{
   try{
     const bookings=await EventBookingModel.find();
     res.status(200).json({
@@ -85,6 +85,7 @@ const getBooking=async ()=>{
   }
   catch(error){
     res.status(500).json({
+      success:false,
       error:"Something Went Wrong"
     })
   }
