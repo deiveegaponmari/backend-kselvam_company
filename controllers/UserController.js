@@ -19,7 +19,7 @@ const RegisterUser = async (req, res) => {
     });
   } catch (error) {
     console.log("Registration Error:", error);
-    return res.status(500).json({ error: "Server Error" });
+    return res.status(500).json({ error:error.message });
   }
 };
 
