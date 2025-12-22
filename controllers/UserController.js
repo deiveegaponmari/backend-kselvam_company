@@ -47,6 +47,7 @@ const LoginUser=async (req,res)=>{
         )
         return res.status(200).json({
             token:generateToken,
+            role:user.role,
             message:"Login successfull!!!!"})
 
     }
